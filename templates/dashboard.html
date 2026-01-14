@@ -5,138 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KokKokKok - Dashboard</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .success {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .user-info {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #2196F3;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            margin-right: 10px;
-            margin-top: 10px;
-        }
-        .btn:hover {
-            background: #1976D2;
-        }
-        .btn-logout {
-            background: #f44336;
-        }
-        .btn-logout:hover {
-            background: #d32f2f;
-        }
-        .status-box {
-            margin-top: 30px;
-            padding: 15px;
-            background: #e8f4fd;
-            border-radius: 5px;
-        }
-        .status-online {
-            color: #2E7D32;
-            font-weight: bold;
-        }
-        .status-offline {
-            color: #d32f2f;
-            font-weight: bold;
-        }
-        .name-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        .name-edit-form {
-            display: none;
-            margin: 10px 0;
-            padding: 15px;
-            background: #fff;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .message-success {
-            color: #2E7D32;
-            background: #e8f5e9;
-            padding: 8px;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .message-error {
-            color: #d32f2f;
-            background: #ffebee;
-            padding: 8px;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .message-loading {
-            color: #1976D2;
-            background: #e3f2fd;
-            padding: 8px;
-            border-radius: 4px;
-            margin: 10px 0;
-        }
-        .wallet-address {
-            font-family: monospace;
-            word-break: break-all;
-        }
-        .debug-info {
-            background: #f0f8ff;
-            border: 1px dashed #4CAF50;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 12px;
-            font-family: monospace;
-        }
-        .test-section {
-            background: #fff3cd;
-            border: 1px dashed #ff9800;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        @media (max-width: 768px) {
-            .wallet-address {
-                display: inline-block;
-                max-width: 200px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                vertical-align: middle;
-            }
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .success { background: linear-gradient(135deg, #4CAF50, #2E7D32); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .user-info { background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .btn { display: inline-block; padding: 10px 20px; background: #2196F3; color: white; text-decoration: none; border-radius: 5px; border: none; cursor: pointer; margin-right: 10px; margin-top: 10px; }
+        .btn:hover { background: #1976D2; }
+        .btn-logout { background: #f44336; }
+        .btn-logout:hover { background: #d32f2f; }
+        .status-box { margin-top: 30px; padding: 15px; background: #e8f4fd; border-radius: 5px; }
+        .status-online { color: #2E7D32; font-weight: bold; }
+        .status-offline { color: #d32f2f; font-weight: bold; }
+        .name-section { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+        .name-edit-form { display: none; margin: 10px 0; padding: 15px; background: #fff; border-radius: 5px; border: 1px solid #ddd; }
+        .debug-info { background: #f0f8ff; border: 1px dashed #4CAF50; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 12px; font-family: monospace; }
+        .test-section { background: #fff3cd; border: 1px dashed #ff9800; padding: 10px; border-radius: 5px; margin: 15px 0; }
+        .wallet-address { font-family: monospace; word-break: break-all; }
     </style>
 </head>
 <body>
@@ -146,27 +30,14 @@
             <p>KokKokKok Dashboard ยินดีต้อนรับ</p>
         </div>
         
-        <!-- Debug Information -->
-        <div class="debug-info" id="debugInfo">
-            <p><strong>Debug Info:</strong> 
-                <span id="debugDomain"></span> | 
-                <span id="debugBackendUrl"></span>
-            </p>
-            <button onclick="forceUpdateBackend()" class="btn" style="padding: 5px 10px; font-size: 11px; background: #ff9800;">
-                🔄 Force Fix Backend URL
+        <div class="debug-info">
+            <p><strong>Debug:</strong> <span id="debugDomain"></span> | <span id="debugBackendUrl"></span></p>
+            <button onclick="testEndpoints()" class="btn" style="padding: 5px 10px; font-size: 11px; background: #ff9800;">
+                🧪 Test Endpoints
             </button>
             <button onclick="debugToken()" class="btn" style="padding: 5px 10px; font-size: 11px; background: #9C27B0;">
                 🔍 Debug Token
             </button>
-        </div>
-        
-        <!-- API Test Section -->
-        <div class="test-section">
-            <h3 style="margin-top: 0;">🧪 API Tests</h3>
-            <button onclick="testAllEndpoints()" class="btn" style="padding: 5px 10px; font-size: 11px; background: #17a2b8;">
-                Test All Endpoints
-            </button>
-            <div id="testResults" style="margin-top: 10px; font-family: monospace; font-size: 11px;"></div>
         </div>
         
         <div class="user-info">
@@ -174,7 +45,6 @@
             <div id="userData">
                 <p><strong>อีเมล:</strong> <span id="userEmail">Loading...</span></p>
                 
-                <!-- Name with Edit Button -->
                 <div class="name-section">
                     <p style="margin: 0;"><strong>ชื่อ:</strong> <span id="userName">Loading...</span></p>
                     <button onclick="toggleNameEdit()" class="btn" style="padding: 4px 12px; font-size: 12px;">
@@ -182,7 +52,6 @@
                     </button>
                 </div>
                 
-                <!-- Name Edit Form -->
                 <div id="nameEditForm" class="name-edit-form">
                     <h3 style="margin-top: 0;">แก้ไขชื่อของท่าน</h3>
                     <div style="display: flex; gap: 10px; align-items: center;">
@@ -222,71 +91,25 @@
     <script>
     // ========== GLOBAL VARIABLES ==========
     let isEditingName = false;
-    let currentBackendUrl = '';
 
     // ========== INITIALIZATION ==========
-    console.log('Dashboard loaded - v2.1.5');
+    console.log('Dashboard loaded');
 
-    // ========== DEBUG FUNCTIONS ==========
+    // ========== BASIC FUNCTIONS ==========
+    function getBackendUrl() {
+        return window.location.origin;
+    }
+
     function updateDebugInfo() {
         document.getElementById('debugDomain').textContent = `Domain: ${window.location.hostname}`;
         document.getElementById('debugBackendUrl').textContent = `Backend: ${getBackendUrl()}`;
     }
 
-    function forceUpdateBackend() {
-        localStorage.removeItem('backend_url');
-        localStorage.removeItem('backend_port');
-        
-        const currentDomain = window.location.origin;
-        localStorage.setItem('backend_url', currentDomain);
-        
-        alert(`✅ Backend URL updated to:\n${currentDomain}\n\nPage will reload.`);
-        window.location.reload();
-    }
-
-    function debugToken() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert('❌ No token found');
-            return;
-        }
-        
-        console.log('🔐 Token (first 50 chars):', token.substring(0, 50) + '...');
-        
-        try {
-            const parts = token.split('.');
-            if (parts.length === 3) {
-                const payload = JSON.parse(atob(parts[1]));
-                console.log('🔐 Token payload:', payload);
-                
-                let message = '🔐 Token Info:\n\n';
-                message += `User ID: ${payload.userId || 'N/A'}\n`;
-                message += `Email: ${payload.email || 'N/A'}\n`;
-                message += `Name: ${payload.name || 'N/A'}\n`;
-                if (payload.exp) {
-                    const expiry = new Date(payload.exp * 1000);
-                    message += `Expires: ${expiry.toLocaleString()}\n`;
-                }
-                
-                alert(message);
-            }
-        } catch (e) {
-            console.error('Error decoding token:', e);
-            alert('❌ Error decoding token');
-        }
-    }
-
-    // ========== AUTHENTICATION ==========
     function checkAuthentication() {
         const token = localStorage.getItem('token') || localStorage.getItem('user_token');
-        const userData = localStorage.getItem('user') || localStorage.getItem('user_data');
-        
-        console.log('🔐 Token found:', !!token);
-        console.log('👤 User data found:', !!userData);
         
         if (!token) {
-            console.log('❌ No token found, redirecting to login...');
-            showMessage('No authentication token found. Redirecting to login...', 'error');
+            console.log('No token found, redirecting...');
             setTimeout(() => {
                 window.location.href = '/templates/login.html';
             }, 2000);
@@ -296,11 +119,8 @@
         return true;
     }
 
-    // ========== USER DATA FUNCTIONS ==========
     function loadUserData() {
         const userData = localStorage.getItem('user') || localStorage.getItem('user_data');
-        
-        console.log('Loading user data from storage:', userData ? 'Yes' : 'No');
         
         if (userData) {
             try {
@@ -309,18 +129,14 @@
                 document.getElementById('userName').textContent = user.name || 'Not set';
                 document.getElementById('userId').textContent = user.user_id || 'Not set';
                 document.getElementById('tokenId').textContent = user.token_id || 'Not set';
-
-                console.log('✅ User loaded:', user);
+                console.log('User loaded:', user);
             } catch (e) {
                 console.error('Error parsing user data:', e);
-                showMessage('Error loading user data', 'error');
             }
-        } else {
-            showMessage('No user data found.', 'error');
         }
     }
 
-    // ========== NAME EDITING FUNCTIONS ==========
+    // ========== NAME EDIT FUNCTIONS ==========
     function toggleNameEdit() {
         const form = document.getElementById('nameEditForm');
         const currentName = document.getElementById('userName').textContent;
@@ -346,42 +162,28 @@
     async function saveName() {
         try {
             const nameInput = document.getElementById('newNameInput');
-            if (!nameInput) {
-                showMessage('Input field not found. Please refresh the page.', 'error');
-                return;
-            }
-            
             const newName = nameInput.value.trim();
             
-            // Validate
             if (!newName) {
                 document.getElementById('nameEditMessage').innerHTML = 
                     '<span style="color: red;">Please enter a name</span>';
                 return;
             }
             
-            // Get token
             const token = localStorage.getItem('token') || localStorage.getItem('user_token');
             
             if (!token) {
-                showMessage('Session expired. Please login again.', 'error');
-                setTimeout(() => {
-                    window.location.href = '/templates/login.html';
-                }, 1000);
+                alert('Session expired. Please login again.');
+                window.location.href = '/templates/login.html';
                 return;
             }
             
-            // Show loading
             document.getElementById('nameEditMessage').innerHTML = 
                 '<span style="color: blue;">Updating name...</span>';
             
-            // Get backend URL
             const backendUrl = getBackendUrl();
-            console.log('📤 Updating name via:', backendUrl + '/api/auth/update-profile');
-            console.log('📤 Token:', token.substring(0, 20) + '...');
-            console.log('📤 New name:', newName);
+            console.log('Updating name via:', backendUrl + '/api/auth/update-profile');
             
-            // Send update request
             const response = await fetch(`${backendUrl}/api/auth/update-profile`, {
                 method: 'PUT',
                 headers: {
@@ -391,26 +193,22 @@
                 body: JSON.stringify({ name: newName })
             });
             
-            console.log('📥 Response status:', response.status);
+            console.log('Response status:', response.status);
             
-            // Handle response
             if (response.status === 401) {
                 localStorage.clear();
-                showMessage('Session expired. Please login again.', 'error');
-                setTimeout(() => {
-                    window.location.href = '/templates/login.html';
-                }, 1000);
+                alert('Session expired. Please login again.');
+                window.location.href = '/templates/login.html';
                 return;
             }
             
             const data = await response.json();
-            console.log('📥 Response data:', data);
+            console.log('Response data:', data);
             
             if (data.success) {
                 document.getElementById('nameEditMessage').innerHTML = 
                     '<span style="color: green;">✅ Profile updated successfully!</span>';
                 
-                // Update UI
                 document.getElementById('userName').textContent = newName;
                 
                 // Update localStorage
@@ -418,17 +216,13 @@
                 if (userData) {
                     const user = JSON.parse(userData);
                     user.name = newName;
-                    if (data.user) {
-                        Object.assign(user, data.user);
-                    }
                     localStorage.setItem('user', JSON.stringify(user));
                     localStorage.setItem('user_data', JSON.stringify(user));
                 }
                 
-                // Hide form after successful update
                 setTimeout(() => {
                     cancelNameEdit();
-                    showMessage('Name updated successfully!', 'success');
+                    alert('Name updated successfully!');
                 }, 1500);
                 
             } else {
@@ -440,40 +234,14 @@
         } catch (error) {
             console.error('Update error:', error);
             document.getElementById('nameEditMessage').innerHTML = 
-                `<span style="color: red;">Network error: ${error.message}</span>`;
+                `<span style="color: red;">❌ Error: ${error.message}</span>`;
         }
     }
 
-    // ========== BACKEND FUNCTIONS ==========
-    function getBackendUrl() {
-        // Always use current domain for API calls
-        return window.location.origin;
-    }
-
-    function detectBackendEnvironment() {
-        const isLocalhost = window.location.hostname === 'localhost' || 
-                            window.location.hostname === '127.0.0.1';
-        
-        currentBackendUrl = getBackendUrl();
-        
-        const environment = isLocalhost ? '🖥️ Local Development' : '🌐 Production';
-        
-        document.getElementById('environment').textContent = environment;
-        document.getElementById('backendUrl').textContent = currentBackendUrl;
-        
-        console.log('🌍 Environment:', environment);
-        console.log('🔗 Backend URL:', currentBackendUrl);
-    }
-
+    // ========== STATUS FUNCTIONS ==========
     async function testBackendConnection() {
         try {
-            const backendUrl = getBackendUrl();
-            console.log('🔍 Testing backend connection to:', backendUrl + '/api/auth/health');
-            
-            const response = await fetch(`${backendUrl}/api/auth/health`, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' }
-            });
+            const response = await fetch(`${getBackendUrl()}/api/auth/health`);
             
             if (response.ok) {
                 const data = await response.json();
@@ -482,13 +250,12 @@
                 return true;
             } else {
                 document.getElementById('backendStatus').innerHTML = 
-                    '<span class="status-offline">❌ Offline - Health check failed.</span>';
+                    '<span class="status-offline">❌ Offline</span>';
                 return false;
             }
         } catch (error) {
             document.getElementById('backendStatus').innerHTML = 
-                '<span class="status-offline">❌ Offline - Connection failed.</span>';
-            console.error('Backend connection test failed:', error);
+                '<span class="status-offline">❌ Connection failed</span>';
             return false;
         }
     }
@@ -498,222 +265,114 @@
         
         if (!token) {
             document.getElementById('sessionStatus').innerHTML = 
-                '<span class="status-offline">❌ No token found</span>';
+                '<span class="status-offline">❌ No token</span>';
             return false;
         }
         
         try {
-            const backendUrl = getBackendUrl();
-            console.log('🔐 Testing token with:', backendUrl + '/api/auth/validate-token');
-            
-            const response = await fetch(`${backendUrl}/api/auth/validate-token`, {
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json'
-                }
+            // Try validate-token first
+            let response = await fetch(`${getBackendUrl()}/api/auth/validate-token`, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             
-            console.log('🔐 Response status:', response.status);
+            if (response.status === 404) {
+                // Fallback to debug-token
+                response = await fetch(`${getBackendUrl()}/api/auth/debug-token`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+            }
             
             if (response.ok) {
-                const data = await response.json();
-                console.log('🔐 Valid user:', data.user);
                 document.getElementById('sessionStatus').innerHTML = 
-                    `<span class="status-online">✅ Valid (${data.user?.email || 'Active'})</span>`;
+                    '<span class="status-online">✅ Valid token</span>';
                 return true;
             } else {
-                const errorText = await response.text();
-                console.error('🔐 Token validation failed:', errorText);
+                // If endpoints don't exist but token exists, show warning
                 document.getElementById('sessionStatus').innerHTML = 
-                    '<span class="status-offline">❌ Invalid token</span>';
+                    '<span class="status-offline">⚠️ Token exists (validation endpoint missing)</span>';
                 return false;
             }
         } catch (error) {
             document.getElementById('sessionStatus').innerHTML = 
-                '<span class="status-offline">❌ Token check failed</span>';
-            console.error('Token validation error:', error);
+                '<span class="status-offline">❌ Validation failed</span>';
             return false;
         }
     }
 
-    // ========== API TEST FUNCTIONS ==========
-    async function testAllEndpoints() {
-        const resultsDiv = document.getElementById('testResults');
-        resultsDiv.innerHTML = '<div style="color: blue;">🧪 Testing endpoints...</div>';
-        
-        const backendUrl = getBackendUrl();
-        const token = localStorage.getItem('token');
+    // ========== DEBUG FUNCTIONS ==========
+    async function testEndpoints() {
+        console.log('🧪 Testing endpoints...');
         
         const endpoints = [
-            { name: 'Health Check', url: `${backendUrl}/api/health`, method: 'GET', auth: false },
-            { name: 'Auth Health', url: `${backendUrl}/api/auth/health`, method: 'GET', auth: false },
-            { name: 'Validate Token', url: `${backendUrl}/api/auth/validate-token`, method: 'GET', auth: true },
-            { name: 'User Profile', url: `${backendUrl}/api/auth/profile`, method: 'GET', auth: true }
+            '/api/health',
+            '/api/auth/health', 
+            '/api/auth/validate-token',
+            '/api/auth/debug-token'
         ];
-        
-        let results = [];
         
         for (const endpoint of endpoints) {
             try {
-                const headers = { 'Accept': 'application/json' };
-                if (endpoint.auth && token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-                
-                const response = await fetch(endpoint.url, { method: endpoint.method, headers });
-                const status = response.status;
-                const isSuccess = response.ok;
-                
-                let resultText;
-                try {
-                    const data = await response.json();
-                    resultText = JSON.stringify(data, null, 2).substring(0, 200) + '...';
-                } catch {
-                    resultText = await response.text();
-                }
-                
-                results.push({
-                    name: endpoint.name,
-                    status: status,
-                    success: isSuccess,
-                    result: resultText
-                });
-                
+                const response = await fetch(getBackendUrl() + endpoint);
+                console.log(`${endpoint}: ${response.status} ${response.statusText}`);
             } catch (error) {
-                results.push({
-                    name: endpoint.name,
-                    status: 'ERROR',
-                    success: false,
-                    result: error.message
-                });
+                console.error(`${endpoint}:`, error.message);
             }
         }
         
-        // Display results
-        let html = '<h4 style="margin: 0 0 10px 0;">Test Results:</h4>';
-        results.forEach(result => {
-            const color = result.success ? 'green' : 'red';
-            html += `
-                <div style="margin-bottom: 8px; padding: 5px; border-left: 3px solid ${color};">
-                    <strong>${result.name}:</strong> 
-                    <span style="color: ${color}; font-weight: bold;">
-                        ${result.success ? '✅' : '❌'} ${result.status}
-                    </span>
-                    <div style="color: #666; font-size: 10px; margin-top: 2px;">
-                        ${result.result}
-                    </div>
-                </div>
-            `;
-        });
-        
-        resultsDiv.innerHTML = html;
+        alert('Check browser console for test results');
     }
 
-    // ========== UTILITY FUNCTIONS ==========
-    function showMessage(message, type = 'info') {
-        const colors = {
-            'success': '#4CAF50',
-            'error': '#f44336',
-            'info': '#2196F3',
-            'warning': '#ff9800'
-        };
+    function debugToken() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('No token found');
+            return;
+        }
         
-        console.log(`${type.toUpperCase()}: ${message}`);
+        console.log('Token (first 50 chars):', token.substring(0, 50) + '...');
         
-        const toast = document.createElement('div');
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            background: ${colors[type] || '#2196F3'};
-            color: white;
-            border-radius: 5px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            font-weight: 500;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        `;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        try {
+            const parts = token.split('.');
+            if (parts.length === 3) {
+                const payload = JSON.parse(atob(parts[1]));
+                console.log('Token payload:', payload);
+                alert(`Token Info:\n\nUser ID: ${payload.userId || 'N/A'}\nEmail: ${payload.email || 'N/A'}`);
+            }
+        } catch (e) {
+            console.error('Error decoding token:', e);
+        }
     }
 
     function logout() {
         if (confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user_token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('user_data');
-            localStorage.removeItem('backend_url');
-            localStorage.removeItem('backend_port');
-            
-            alert('Logged out successfully!');
+            localStorage.clear();
             window.location.href = '/templates/login.html';
         }
     }
 
-    // ========== MAIN INITIALIZATION ==========
+    // ========== INITIALIZE ==========
     function initializeDashboard() {
-        console.log('🚀 Initializing dashboard...');
-        console.log('📍 Current URL:', window.location.href);
-        console.log('🌐 Origin:', window.location.origin);
+        console.log('Initializing dashboard...');
         
-        // Update debug info
-        updateDebugInfo();
-        
-        // First check authentication
         if (!checkAuthentication()) {
             return;
         }
         
-        // Load user data
+        updateDebugInfo();
         loadUserData();
         
-        // Detect environment and setup backend
-        detectBackendEnvironment();
+        // Set environment
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        document.getElementById('environment').textContent = isLocalhost ? '🖥️ Local Development' : '🌐 Production';
+        document.getElementById('backendUrl').textContent = getBackendUrl();
         
-        // Test backend connection
         testBackendConnection();
-        
-        // Test token validity
         testTokenValidity();
         
-        // Auto-refresh status
-        setInterval(() => {
-            testBackendConnection();
-            updateDebugInfo();
-        }, 30000);
-        
-        console.log('✅ Dashboard initialized successfully');
+        console.log('Dashboard initialized');
     }
 
-    // Add CSS for animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', initializeDashboard);
-    
-    // Global error handler
-    window.addEventListener('error', function(e) {
-        console.error('Global error:', e.error);
-        showMessage('An error occurred: ' + e.error.message, 'error');
-    });
     </script>
 </body>
 </html>

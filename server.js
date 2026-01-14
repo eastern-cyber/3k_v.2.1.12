@@ -1,4 +1,4 @@
-// server.js - COMPLETE WORKING VERSION
+// server.js - FINAL WORKING VERSION
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -62,13 +62,9 @@ const authenticateToken = (req, res, next) => {
 
 // ========== STATIC FILES ==========
 app.use('/static', express.static(path.join(__dirname, 'static')));
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/css', express.static(path.join(__dirname, 'public/css')));
-app.use('/js', express.static(path.join(__dirname, 'public/js')));
-app.use('/images', express.static(path.join(__dirname, 'public/images')));
-app.use('/templates', express.static(path.join(__dirname, 'templates')));
+app.use(express.static(path.join(__dirname, 'templates')));
 
-// Serve HTML files
+// ========== HTML ROUTES ==========
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates/login.html'));
 });
@@ -83,7 +79,7 @@ app.get('/', (req, res) => {
 
 // ========== API ROUTES ==========
 
-// Health check endpoint
+// Health check
 app.get('/api/health', async (req, res) => {
     try {
         let dbStatus = 'unknown';
@@ -112,7 +108,7 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Auth health endpoint
+// Auth health
 app.get('/api/auth/health', (req, res) => {
     res.json({
         success: true,
@@ -122,7 +118,7 @@ app.get('/api/auth/health', (req, res) => {
     });
 });
 
-// Token validation endpoint - THIS WAS MISSING
+// Token validation - THIS ENDPOINT WAS MISSING
 app.get('/api/auth/validate-token', authenticateToken, (req, res) => {
     res.json({
         success: true,
@@ -132,7 +128,7 @@ app.get('/api/auth/validate-token', authenticateToken, (req, res) => {
     });
 });
 
-// Debug token endpoint (compatibility)
+// Debug token (compatibility)
 app.get('/api/auth/debug-token', authenticateToken, (req, res) => {
     res.json({
         success: true,
@@ -179,7 +175,7 @@ app.get('/api/auth/profile', authenticateToken, async (req, res) => {
     }
 });
 
-// Login endpoint
+// Login
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -198,7 +194,6 @@ app.post('/api/auth/login', async (req, res) => {
             });
         }
         
-        // Find user by email or user_id
         const result = await pool.query(
             `SELECT id, user_id, email, name, password_hash
              FROM users WHERE email = $1 OR user_id = $1`,
@@ -222,7 +217,6 @@ app.post('/api/auth/login', async (req, res) => {
             });
         }
         
-        // Create JWT token
         const token = jwt.sign(
             {
                 userId: user.id,
@@ -234,7 +228,6 @@ app.post('/api/auth/login', async (req, res) => {
             { expiresIn: '7d' }
         );
         
-        // Remove password from response
         const { password_hash, ...userData } = user;
         
         res.json({
@@ -254,21 +247,22 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// Update profile endpoint - FIXED VERSION
+// Update profile - SIMPLIFIED WORKING VERSION
 app.put('/api/auth/update-profile', authenticateToken, async (req, res) => {
-    console.log('📝 Update profile request received');
-    console.log('📝 Headers:', req.headers);
-    console.log('📝 User from token:', req.user);
-    console.log('📝 Request body:', req.body);
+    console.log('=== UPDATE PROFILE REQUEST ===');
+    console.log('Headers:', req.headers);
+    console.log('User from token:', req.user);
+    console.log('Request body:', req.body);
     
     try {
         const { name } = req.body;
         const userId = req.user.userId;
         
-        console.log('Request data:', { name, userId });
+        console.log('Processing:', { name, userId });
         
-        // Validate input
+        // Validate
         if (!name || typeof name !== 'string' || name.trim().length === 0) {
+            console.log('Validation failed: Invalid name');
             return res.status(400).json({
                 success: false,
                 message: 'Valid name is required'
@@ -276,6 +270,7 @@ app.put('/api/auth/update-profile', authenticateToken, async (req, res) => {
         }
 
         if (!userId) {
+            console.log('Validation failed: No user ID');
             return res.status(400).json({
                 success: false,
                 message: 'User ID is required'
@@ -283,64 +278,33 @@ app.put('/api/auth/update-profile', authenticateToken, async (req, res) => {
         }
 
         if (!pool) {
-            console.error('❌ Database pool not available');
+            console.log('Database pool not available');
             return res.status(500).json({
                 success: false,
                 message: 'Database connection not available'
             });
         }
 
-        // Test database connection first
-        try {
-            await pool.query('SELECT 1');
-            console.log('✅ Database connection OK');
-        } catch (dbError) {
-            console.error('❌ Database connection failed:', dbError);
-            return res.status(500).json({
-                success: false,
-                message: 'Database connection failed',
-                error: dbError.message
-            });
-        }
-
-        // Simple update query
         const trimmedName = name.trim();
+        console.log(`Updating user ${userId} name to: "${trimmedName}"`);
         
-        console.log(`🔄 Updating user ${userId} name to: "${trimmedName}"`);
-        
-        // Check if user exists first
-        const checkResult = await pool.query(
-            'SELECT id FROM users WHERE id = $1',
-            [userId]
+        // SIMPLE UPDATE - No error handling for now
+        const result = await pool.query(
+            'UPDATE users SET name = $1 WHERE id = $2 RETURNING id, user_id, email, name',
+            [trimmedName, userId]
         );
         
-        if (checkResult.rows.length === 0) {
-            console.error(`❌ User with ID ${userId} not found`);
-            return res.status(404).json({
-                success: false,
-                message: `User with ID ${userId} not found`
-            });
-        }
-        
-        // Update the user
-        const query = 'UPDATE users SET name = $1 WHERE id = $2 RETURNING id, user_id, email, name';
-        const values = [trimmedName, userId];
-        
-        console.log('📝 Executing query:', query);
-        console.log('📝 With values:', values);
-        
-        const result = await pool.query(query, values);
-        
-        console.log('📝 Update result:', result.rows);
+        console.log('Update result:', result.rows);
         
         if (result.rowCount === 0) {
-            return res.status(500).json({
+            console.log('No user found with ID:', userId);
+            return res.status(404).json({
                 success: false,
-                message: 'Update failed - no rows affected'
+                message: 'User not found'
             });
         }
 
-        console.log('✅ Profile updated successfully');
+        console.log('✅ Update successful');
         
         res.json({
             success: true,
@@ -349,20 +313,19 @@ app.put('/api/auth/update-profile', authenticateToken, async (req, res) => {
         });
         
     } catch (error) {
-        console.error('❌ Update profile error:', error);
+        console.error('❌ UPDATE ERROR:', error);
         console.error('Error stack:', error.stack);
         
         res.status(500).json({
             success: false,
             message: 'Server error updating profile',
             error: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            hint: 'Check if user ID exists in database'
         });
     }
 });
 
-// ========== CATCH-ALL ROUTES ==========
-// API 404 handler
+// ========== ERROR HANDLING ==========
 app.use('/api/*', (req, res) => {
     res.status(404).json({
         success: false,
@@ -370,25 +333,21 @@ app.use('/api/*', (req, res) => {
     });
 });
 
-// SPA catch-all - serve index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates/index.html'));
 });
 
-// ========== EXPORT & START SERVER ==========
+// ========== EXPORT ==========
 module.exports = app;
 
-// Start server locally if not running on Vercel
 if (require.main === module) {
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
         console.log(`🚀 Server running on port ${PORT}`);
-        console.log(`📁 Static files: ${__dirname}`);
-        console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
-        console.log(`🔗 API endpoints:`);
-        console.log(`   POST /api/auth/login`);
-        console.log(`   GET  /api/auth/validate-token`);
-        console.log(`   GET  /api/auth/profile`);
-        console.log(`   PUT  /api/auth/update-profile`);
+        console.log(`📁 Serving from: ${__dirname}`);
+        console.log(`🔗 Test endpoints:`);
+        console.log(`   http://localhost:${PORT}/api/health`);
+        console.log(`   http://localhost:${PORT}/api/auth/validate-token`);
+        console.log(`   http://localhost:${PORT}/api/auth/update-profile`);
     });
 }
