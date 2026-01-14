@@ -5,6 +5,9 @@
     }
   },
   "rewrites": [
+    { "source": "/api/auth/change-password", "destination": "/api/auth/change-password.js" },
+    { "source": "/api/auth/forgot-password", "destination": "/api/auth/forgot-password.js" },
+    { "source": "/api/auth/reset-password", "destination": "/api/auth/reset-password.js" },
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
