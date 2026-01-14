@@ -337,6 +337,111 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates/index.html'));
 });
 
+// Change password endpoint
+app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
+    console.log('🔐 Change password request received');
+    
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.userId;
+        
+        console.log('Request data:', { userId, user: req.user });
+        
+        // Validate input
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Current password and new password are required'
+            });
+        }
+        
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be at least 6 characters'
+            });
+        }
+        
+        if (currentPassword === newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'New password must be different from current password'
+            });
+        }
+        
+        if (!pool) {
+            return res.status(500).json({
+                success: false,
+                message: 'Database connection not available'
+            });
+        }
+        
+        // Get user from database
+        const userResult = await pool.query(
+            'SELECT id, password_hash FROM users WHERE id = $1',
+            [userId]
+        );
+        
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+        
+        const user = userResult.rows[0];
+        
+        // Verify current password
+        const validPassword = await bcrypt.compare(currentPassword, user.password_hash);
+        
+        if (!validPassword) {
+            return res.status(401).json({
+                success: false,
+                message: 'Current password is incorrect'
+            });
+        }
+        
+        // Hash new password
+        const saltRounds = 10;
+        const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+        
+        // Update password in database
+        const updateResult = await pool.query(
+            'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2 RETURNING id, email, name',
+            [newPasswordHash, userId]
+        );
+        
+        console.log('✅ Password updated successfully for user:', userId);
+        
+        // Option 1: Return success without logging out
+        res.json({
+            success: true,
+            message: 'Password changed successfully',
+            logoutRequired: false // Set to true if you want to force logout
+        });
+        
+        // Option 2: Invalidate all existing tokens (more secure)
+        // You might want to implement token blacklisting here
+        
+    } catch (error) {
+        console.error('❌ Change password error:', error);
+        
+        // Handle specific errors
+        if (error.message.includes('bcrypt')) {
+            return res.status(500).json({
+                success: false,
+                message: 'Password encryption error'
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: 'Server error changing password',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+});
+
 // ========== EXPORT ==========
 module.exports = app;
 
