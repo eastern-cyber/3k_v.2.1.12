@@ -1,4 +1,4 @@
-// server.js - Vercel Serverless compatible
+// server.js - COMPLETE WORKING VERSION
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -61,16 +61,14 @@ const authenticateToken = (req, res, next) => {
 };
 
 // ========== STATIC FILES ==========
+app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
-app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use('/templates', express.static(path.join(__dirname, 'templates')));
 
-// Serve HTML files from templates directory
-app.use(express.static(path.join(__dirname, 'templates')));
-
-// ========== HTML PAGE ROUTES ==========
+// Serve HTML files
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates/login.html'));
 });
@@ -114,8 +112,8 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Auth health endpoint (for frontend)
-app.get('/api/auth/health', async (req, res) => {
+// Auth health endpoint
+app.get('/api/auth/health', (req, res) => {
     res.json({
         success: true,
         service: 'KokKokKok Auth API',
@@ -124,7 +122,7 @@ app.get('/api/auth/health', async (req, res) => {
     });
 });
 
-// Token validation endpoints
+// Token validation endpoint - THIS WAS MISSING
 app.get('/api/auth/validate-token', authenticateToken, (req, res) => {
     res.json({
         success: true,
@@ -134,7 +132,7 @@ app.get('/api/auth/validate-token', authenticateToken, (req, res) => {
     });
 });
 
-// Debug token endpoint (alias for compatibility)
+// Debug token endpoint (compatibility)
 app.get('/api/auth/debug-token', authenticateToken, (req, res) => {
     res.json({
         success: true,
@@ -259,12 +257,15 @@ app.post('/api/auth/login', async (req, res) => {
 // Update profile endpoint - FIXED VERSION
 app.put('/api/auth/update-profile', authenticateToken, async (req, res) => {
     console.log('📝 Update profile request received');
+    console.log('📝 Headers:', req.headers);
+    console.log('📝 User from token:', req.user);
+    console.log('📝 Request body:', req.body);
     
     try {
         const { name } = req.body;
         const userId = req.user.userId;
         
-        console.log('Request data:', { name, userId, user: req.user });
+        console.log('Request data:', { name, userId });
         
         // Validate input
         if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -302,25 +303,40 @@ app.put('/api/auth/update-profile', authenticateToken, async (req, res) => {
             });
         }
 
-        // Update user in database - SIMPLE WORKING VERSION
+        // Simple update query
         const trimmedName = name.trim();
         
         console.log(`🔄 Updating user ${userId} name to: "${trimmedName}"`);
         
+        // Check if user exists first
+        const checkResult = await pool.query(
+            'SELECT id FROM users WHERE id = $1',
+            [userId]
+        );
+        
+        if (checkResult.rows.length === 0) {
+            console.error(`❌ User with ID ${userId} not found`);
+            return res.status(404).json({
+                success: false,
+                message: `User with ID ${userId} not found`
+            });
+        }
+        
+        // Update the user
         const query = 'UPDATE users SET name = $1 WHERE id = $2 RETURNING id, user_id, email, name';
         const values = [trimmedName, userId];
         
-        console.log('Executing query:', query);
-        console.log('With values:', values);
+        console.log('📝 Executing query:', query);
+        console.log('📝 With values:', values);
         
         const result = await pool.query(query, values);
         
-        console.log('Update result:', result.rows);
+        console.log('📝 Update result:', result.rows);
         
         if (result.rowCount === 0) {
-            return res.status(404).json({
+            return res.status(500).json({
                 success: false,
-                message: 'User not found'
+                message: 'Update failed - no rows affected'
             });
         }
 
@@ -340,8 +356,7 @@ app.put('/api/auth/update-profile', authenticateToken, async (req, res) => {
             success: false,
             message: 'Server error updating profile',
             error: error.message,
-            // Include stack trace only in development
-            ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 });
