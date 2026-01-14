@@ -629,18 +629,9 @@
                 return;
             }
             
-            // Check if new password is different from current
             if (currentPassword === newPassword) {
                 messageDiv.innerHTML = '<span style="color: red;">รหัสผ่านใหม่ต้องแตกต่างจากรหัสผ่านปัจจุบัน</span>';
                 return;
-            }
-            
-            // Password strength check (optional but recommended)
-            const strength = checkPasswordStrength(newPassword);
-            if (strength < 2) {
-                if (!confirm('รหัสผ่านค่อนข้างอ่อนแอ ต้องการใช้รหัสผ่านนี้หรือไม่?')) {
-                    return;
-                }
             }
             
             // Get token
@@ -659,10 +650,11 @@
             
             // Get backend URL
             const backendUrl = getBackendUrl();
-            console.log('🔐 Changing password via:', backendUrl + '/api/auth/change-password');
+            const apiUrl = `${backendUrl}/api/auth/change-password`;
+            console.log('🔐 Changing password via:', apiUrl);
             
             // Send change password request
-            const response = await fetch(`${backendUrl}/api/auth/change-password`, {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -676,6 +668,13 @@
             
             console.log('📥 Response status:', response.status);
             
+            // Check if endpoint exists
+            if (response.status === 404) {
+                messageDiv.innerHTML = '<span style="color: red;">❌ Change password endpoint not found on server</span>';
+                console.error('Endpoint 404: Make sure /api/auth/change-password is implemented on server');
+                return;
+            }
+            
             // Handle response
             if (response.status === 401) {
                 localStorage.clear();
@@ -686,7 +685,19 @@
                 return;
             }
             
-            const data = await response.json();
+            // Get response text first
+            const responseText = await response.text();
+            console.log('📥 Raw response:', responseText.substring(0, 200));
+            
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('❌ JSON parse error:', parseError);
+                messageDiv.innerHTML = '<span style="color: red;">❌ Server returned invalid response</span>';
+                return;
+            }
+            
             console.log('📥 Response data:', data);
             
             if (data.success) {
@@ -699,15 +710,6 @@
                 setTimeout(() => {
                     clearPasswordFields();
                     cancelPasswordChange();
-                    
-                    // Optional: Logout user and redirect to login page
-                    if (data.logoutRequired) {
-                        setTimeout(() => {
-                            alert('กรุณาล็อกอินอีกครั้งด้วยรหัสผ่านใหม่');
-                            localStorage.clear();
-                            window.location.href = '/templates/login.html';
-                        }, 1000);
-                    }
                 }, 1500);
                 
             } else {
@@ -715,7 +717,7 @@
                 messageDiv.innerHTML = `<span style="color: red;">❌ ${errorMsg}</span>`;
                 console.error('Change password failed:', data);
                 
-                // Specific error handling
+                // Highlight incorrect field
                 if (errorMsg.includes('current password') || errorMsg.includes('รหัสผ่านปัจจุบัน')) {
                     document.getElementById('currentPassword').focus();
                     document.getElementById('currentPassword').style.borderColor = '#f44336';

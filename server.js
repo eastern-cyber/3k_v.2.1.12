@@ -337,15 +337,21 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates/index.html'));
 });
 
-// Change password endpoint
+// ========== CHANGE PASSWORD ENDPOINT ==========
 app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
     console.log('🔐 Change password request received');
     
     try {
         const { currentPassword, newPassword } = req.body;
         const userId = req.user.userId;
+        const userEmail = req.user.email;
         
-        console.log('Request data:', { userId, user: req.user });
+        console.log('Request data:', { 
+            userId, 
+            userEmail,
+            hasCurrentPassword: !!currentPassword,
+            hasNewPassword: !!newPassword 
+        });
         
         // Validate input
         if (!currentPassword || !newPassword) {
@@ -413,20 +419,15 @@ app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
         
         console.log('✅ Password updated successfully for user:', userId);
         
-        // Option 1: Return success without logging out
         res.json({
             success: true,
             message: 'Password changed successfully',
-            logoutRequired: false // Set to true if you want to force logout
+            logoutRequired: false
         });
-        
-        // Option 2: Invalidate all existing tokens (more secure)
-        // You might want to implement token blacklisting here
         
     } catch (error) {
         console.error('❌ Change password error:', error);
         
-        // Handle specific errors
         if (error.message.includes('bcrypt')) {
             return res.status(500).json({
                 success: false,
