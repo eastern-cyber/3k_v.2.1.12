@@ -23,6 +23,7 @@ from a_posts.views import *
 urlpatterns = [
     path('', home_view, name="home"),
     path('admin/', admin.site.urls),
+    path('explore/', explore_view, name="explore"),
 ]
 
 if settings.DEBUG:
