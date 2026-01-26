@@ -1,0 +1,26 @@
+# Django Core
+Django==5.2.3
+asgiref==3.8.1
+
+# REST Framework
+djangorestframework==3.15.1
+django-filter==24.3
+
+# Authentication & CORS
+django-cors-headers==4.3.1
+djoser==2.2.2
+django-rest-knox==4.2.0
+
+# Database
+dj-database-url==2.1.0
+psycopg2-binary==2.9.9
+
+# Static Files & Media
+whitenoise==6.6.0
+Pillow==10.3.0
+
+# Production Server
+gunicorn==21.2.0
+
+# Environment Variables
+python-decouple==3.8

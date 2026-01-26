@@ -1,0 +1,13 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+
+[deploy]
+startCommand = "python manage.py migrate --noinput && gunicorn _core.wsgi:application"
+healthcheckPath = "/api/"
+healthcheckTimeout = 100
+
+[[services]]
+name = "3k_v.2.1.10"
+type = "web"
+minInstances = 1
