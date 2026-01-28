@@ -1,13 +1,14 @@
 {% load static %}
 <div class="ml-18 lg:ml-60 px-4 xl:px-12">
     <div class="max-w-[1250px] mx-auto pt-20">
-        <div 
+        <form method="post" enctype="multipart/form-data" class="pt-20" 
             x-data="uploadComponent()"
             @dragenter="isDragging = true"
             @dragleave="isDragging = false"
             @dragover.prevent
             @drop.prevent="fileDropped($event)"
             >
+            {% csrf_token %}
             <upload-box x-show="!imageUrl" class="block rounded-xl py-32 border border-dashed" :class="isDragging ? 'border-blue-400 dark:border-blue-500/50 bg-blue-50 dark:bg-blue-950/40' : 'border-neutral-400 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-900'">
                 <div class="flex flex-col gap-1 items-center text-center w-max mx-auto" :class="{ 'pointer-events-none' : isDragging }">
                     <div class="size-12">
@@ -18,10 +19,10 @@
                     </div>
                     <h1>เลือกภาพที่ต้องการอัพโหลด</h1>
                     <div class="text-neutral-500 mb-3">หรือลากไฟล์ภาพมาปล่อยตรงนี้</div>
-                    <button @click="$refs.inputFileSelected.click()" class="bg-rose-500 hover:bg-rose-600 text-white rounded-md px-7 py-2 font-medium" :class="{ 'opacity-0' : isDragging }">
+                    <button type="button" @click="$refs.inputFileSelected.click()" class="bg-rose-500 hover:bg-rose-600 text-white rounded-md px-7 py-2 font-medium" :class="{ 'opacity-0' : isDragging }">
                         เลือกภาพ
                     </button>
-                    <input class="hidden" type="file" accept="image/*" x-ref="inputFileSelected" @change="fileSelected" />
+                    <input name="image" required class="hidden" type="file" accept="image/*" x-ref="inputFileSelected" @change="fileSelected" />
                 </div>
             </upload-box>
             <create-post-box x-show="imageUrl" class="block" x-transition:enter.opacity.duration.300ms x-cloak >
@@ -30,11 +31,11 @@
                         <div class="flex flex-col gap-4 w-full">
                             <div>
                                 <label class="block font-bold text-neutral-600">แค๊ปชั่น</label>
-                                <textarea x-model="caption" placeholder="เพื่มแค๊ปชั่น..." class="w-full min-h-36 py-3 px-4 bg-neutral-100 dark:bg-neutral-900 rounded-lg outline-none resize-none"></textarea>
+                                <textarea name="body" type="text" maxlength="80" x-model="caption" placeholder="เพื่มแค๊ปชั่น..." class="w-full min-h-36 py-3 px-4 bg-neutral-100 dark:bg-neutral-900 rounded-lg outline-none resize-none"></textarea>
                             </div>
                             <div>
                                 <label class="block font-bold text-neutral-600">Hashtags</label>
-                                <input x-model="hashtag" placeholder="#tags - separated by a space" class="w-full py-3 px-4 bg-neutral-100 dark:bg-neutral-900 rounded-lg outline-none"/>
+                                <input name="tags" type="text" maxlength="80" x-model="hashtag" placeholder="#tags - separated by a space" class="w-full py-3 px-4 bg-neutral-100 dark:bg-neutral-900 rounded-lg outline-none"/>
                             </div>
                             <div class="flex gap-3">
                                 <button type="submit" class="bg-rose-500 hover:bg-rose-600 text-white rounded-md px-7 py-2 font-medium">
@@ -51,7 +52,7 @@
                     </div>
                 </form>
             </create-post-box>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -70,6 +71,10 @@
                 const file = event.dataTransfer.files[0];
                 if (file && file.type.startsWith('image/')) {
                     this.imageUrl = URL.createObjectURL(file);
+
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    this.$refs.inputFileSelected.files = dataTransfer.files;                    
                 }
             },
 

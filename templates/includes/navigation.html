@@ -90,7 +90,7 @@
     <button id="profile" @click="window.location.href = 'profile.html'" class="button-nav dark:hover:!bg-neutral-800">
         <div class="size-8 flex-shrink-0">
             <div class="rounded-full size-7 overflow-hidden">
-                <img src="../media/avatar.png" class="w-full h-full object-cover object-center">
+                <img src="{{ user.image.url }}" class="w-full h-full object-cover object-center">
             </div>
         </div>
         <span :class="{ '!opacity-0' : showDrawer }">
