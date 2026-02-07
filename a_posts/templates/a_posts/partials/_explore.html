@@ -28,7 +28,11 @@
 
         {% for post in posts %}
         <article>
-            <a href="">
+            <button @click="modalPage = true; returnUrl = window.locationpathname;"
+                hx-get="{% url 'post_page' post.uuid %}" 
+                hx-target="#modalpage-content"
+                hx-swap="innerHTML"
+                hx-push-url="true">
                 <div class="relative bg-black w-full aspect-[3/4] rounded-lg overflow-hidden">
                     <img class="w-full h-full object-cover" src="{{ post.image.url }}">
                     <article-info class="absolute bottom-0 left-0 right-0">
@@ -43,7 +47,7 @@
                         </div>
                     </article-info>
                 </div>
-            </a>
+            </button>
             <a href="" class="block my-3">
                 <div class="flex items-center gap-1">
                     <div class="rounded-full size-6 flex items-center justify-center overflow-hidden">

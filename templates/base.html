@@ -27,7 +27,7 @@
             @apply bg-neutral-100 w-full px-3 py-2.5 border border-neutral-300 rounded-sm placeholder-neutral-400 focus:border-neutral-400 focus:outline-hidden 
         }
         button {
-            @apply cursor-pointer
+            @apply cursor-pointer focus:outline-none
         }
         .button {
             @apply bg-neutral-100 w-full px-3 py-2.5 rounded-sm font-medium text-neutral-400 select-none
@@ -61,7 +61,9 @@
     </style>
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
-<body class="dark:bg-black dark:text-white dark:fill-white" hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
+<body x-data="{ modalPage: false }" class="dark:bg-black dark:text-white dark:fill-white" hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
+
+{% include 'includes/modal.html' %}
 
 {% block layout %}
 {% endblock %}

@@ -83,4 +83,6 @@ def post_page_view(request, pk=None):
         'prev_post': prev_post,
         'next_post': next_post,
     }
+    if request.htmx:
+        return render(request, 'a_posts/partials/_postpage.html', context)
     return render(request, 'a_posts/postpage.html', context)
