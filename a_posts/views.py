@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .forms import PostForm
 from .models import Post
 
+
+@login_required
 def home_view(request):
     posts = Post.objects.order_by('-created_at')
     
@@ -28,6 +31,7 @@ def home_view(request):
     return render(request, 'a_posts/home.html', context)
 
 
+@login_required
 def explore_view(request):
     posts = Post.objects.order_by('-created_at')
     context = {
@@ -41,6 +45,7 @@ def explore_view(request):
     return render(request, 'a_posts/explore.html', context)
 
 
+@login_required
 def upload_view(request):
     form = PostForm()
     

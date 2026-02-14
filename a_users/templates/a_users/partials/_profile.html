@@ -14,7 +14,11 @@
                 </div>
                 <div class="flex gap-2 font-medium">
                     {% if profile_user == user %}
-                    <button class="bg-rose-500 hover:bg-rose-600 text-white rounded-md px-7 py-2">
+                    <button @click="modalBox = true"
+                        hx-get="{% url 'profile_edit' %}"
+                        hx-target="#modalbox-content"
+                        hx-swap="innerHTML"
+                        class="bg-rose-500 hover:bg-rose-600 text-white rounded-md px-7 py-2">
                         แก้ไขโพรไฟล์
                     </button>
                     <button class="bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-md px-7 py-2">
