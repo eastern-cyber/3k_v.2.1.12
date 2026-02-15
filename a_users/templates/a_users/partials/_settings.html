@@ -1,0 +1,74 @@
+<div class="border-b border-neutral-200 pb-4">
+    <p class="font-medium text-2xl">
+        ตั้งค่า
+    </p>
+</div>
+
+<div id="email_block" class="md:flex gap-2 pt-4">
+    <div class="w-32 font-medium text-mb">อีเมล</div>
+    <div class="grow">
+        <span>{{ user.email }}</span>
+        {% if form.email.errors %}
+            {{ form.email.errors }}
+        {% endif %}
+    </div>
+    <div class="w-18 md:!w-27 ml-auto">
+        <button class="font-medium text-sky-600 hover:underline hover:text-cyan-800">
+            เปลี่ยน
+        </button>
+    </div>
+</div>
+
+<div id="verify_block" class="md:flex gap-2 pt-2 pb-4 border-b border-neutral-200">
+    <div class="w-32 font-medium text-mb"></div>
+    <div class="grow">
+        {% if user.emailaddress_set.first.verified %}
+        <span class="font-medium text-lime-500">Verified</span>
+        {% else %}
+        <span class="font-medium text-rose-600">Not verified ... !</span>
+        {% endif %}
+    </div>
+    <div class="w-18 md:!w-27 ml-auto">
+        {% if not user.emailaddress_set.first.verified %}
+        <button class="font-medium text-sky-600 hover:underline hover:text-cyan-800">
+            Verify
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<div id="birthday_block" class="md:flex gap-2 py-4 border-b border-neutral-200">
+    <div class="w-32 font-medium text-mb">วันเกิด</div>
+    <div class="grow">
+        <span class="font-medium text-emerald-800">{{ user.birthday }}</span>
+    </div>
+    <div class="w-18 md:!w-27 ml-auto">
+        <button class="font-medium text-sky-600 hover:underline hover:text-cyan-800">
+            เปลี่ยน
+        </button>
+    </div>
+</div>
+
+<div id="notifications_block" class="md:flex gap-2 py-4 border-b border-neutral-200">
+    <div class="w-32 font-medium text-mb">แจ้งเตือน</div>
+    <div class="grow">
+        <span class="font-medium text-lime-900">เปิด-ปิด การแจ้งเตือนทางอีเมล</span>
+    </div>
+    <div class="w-16 md:!w-27 ml-auto">
+        <label class="block w-13 h-6 relative">
+            <input type="checkbox" name="notifications" class="peer sr-only"/>
+            <span class="absolute inset-0 cursor-pointer rounded-full bg-neutral-200 peer-checked:bg-green-500 transition-colors duration-200 ease-out"></span>
+            <span class="absolute left-1 top-1 cursor-pointer w-4 h-4 rounded-full bg-white transition-all duration-200 ease-out peer-checked:left-8"></span>
+        </label>
+    </div>
+</div>
+
+<div id="account_delete_block" class="md:flex gap-2 py-4">
+    <div class="w-32 font-medium text-mb">บัญชีผู้ใช้งาน</div>
+    <div class="grow">
+        <span class="font-medium text-orange-600">เมื่อยืนยันการลบ บัญชีของท่านจะหายไปถาวร ... !</span>
+    </div>
+    <div class="w-16 md:!w-27 ml-auto">
+        <a href="" class="font-medium text-rose-600 hover:underline hover:text-rose-800">ลบบัญชี</a>
+    </div>
+</div>

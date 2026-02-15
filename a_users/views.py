@@ -50,3 +50,10 @@ def profile_edit(request):
     if request.htmx:
         return render(request, "a_users/partials/_profile_edit.html", {'form' : form})
     return redirect('profile', request.user.username)
+
+
+@login_required
+def settings_view(request):
+    if request.htmx:
+        return render(request, "a_users/partials/_settings.html")
+    return render(request, "a_users/settings.html")
