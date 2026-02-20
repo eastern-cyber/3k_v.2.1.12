@@ -12,25 +12,36 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
-import dj_database_url
+#import dj_database_url
 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+from environ import Env
+env = Env()
+env.read_env()
+
+ENVIRONMENT = env('ENVIRONMENT', default='development')
+
+POSTGRES_LOCALLY = False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7fb(te5+oz6nu%guy*e!)(#7o&sf+*j^r4=-9vgw$d7h)5m9)*'
+SECRET_KEY = env('SECRET_KEY', default="secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if ENVIRONMENT == 'development':
+    DEBUG = True
+else:
+    DEBUG = False
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["http://localhost", "http://127.0.0.1"])
 
 
 # Application definition
@@ -64,8 +75,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
 
 ]
 if DEBUG:
@@ -93,7 +105,25 @@ TEMPLATES = [
         },
     },
 ]
+ASGI_APPLICATION = '_core.asgi.application'
 
+
+if ENVIRONMENT == 'production':
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [env("REDIS_URL", default="redis://localhost:6379/0")],
+            },
+        },
+    }
+else:   
+    CHANNEL_LAYERS = {
+        'default': {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
+    }
+    
 WSGI_APPLICATION = '_core.wsgi.application'
 
 
@@ -108,13 +138,30 @@ WSGI_APPLICATION = '_core.wsgi.application'
 # }
 
 # Update database configuration
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+import dj_database_url
+
+if ENVIRONMENT == 'production' or POSTGRES_LOCALLY: 
+    DATABASES = {
+        'default': dj_database_url.parse(env("DATABASE_URL", default="sqlite:///db.sqlite3"))
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+#DATABASES = {
+#    'default': dj_database_url.config(
+#        default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
+#        conn_max_age=600,
+#        conn_health_checks=True,
+#    )
+#}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -155,11 +202,22 @@ STATICFILES_DIRS = [ BASE_DIR / "static"]
 
 # Static files configuration
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / "media"
+
+if ENVIRONMENT == 'production' or POSTGRES_LOCALLY:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -168,8 +226,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'a_users.CustomUser'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+if ENVIRONMENT == 'development':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env('EMAIL_ADDRESS', default="email@example.com")
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default="password")
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+    
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}

@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /Users/macintoshhd/3k.dfi.fund/3k_v.2.1.10/venv
+set -gx VIRTUAL_ENV /Users/macintoshhd/3k.dfi.fund/3k_v.2.1.12/venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
