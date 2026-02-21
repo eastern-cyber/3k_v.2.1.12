@@ -1,10 +1,9 @@
-
 [build]
 builder = "dockerfile"
 dockerfilePath = "./Dockerfile"
 
 [deploy]
-startCommand = "python manage.py migrate --noinput && gunicorn _core.wsgi:application"
+startCommand = "daphne -b 0.0.0.0 -p $PORT _core.asgi:application"
 
 [[services]]
 name = "3k_v.2.1.10"
