@@ -24,7 +24,7 @@ env.read_env()
 
 ENVIRONMENT = env('ENVIRONMENT', default='development')
 
-POSTGRES_LOCALLY = True
+POSTGRES_LOCALLY = False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
